@@ -1,5 +1,4 @@
-﻿
-namespace SharpChip
+﻿namespace SharpChip
 {
     public static class AppSettings
     {
