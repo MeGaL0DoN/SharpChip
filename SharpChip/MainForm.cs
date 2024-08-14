@@ -1,4 +1,7 @@
+using System.Diagnostics;
 using System.Drawing.Drawing2D;
+
+using Timer = System.Timers.Timer;
 
 namespace SharpChip
 {
@@ -29,6 +32,13 @@ namespace SharpChip
             pictureBox.Invalidate();
         }
 
+        void loadROM(string path)
+        {
+            if (emulationPaused) changePauseState();
+            else if (!chipTimer.Enabled) chipTimer.Start();
+            chipCore.LoadRom(path);
+        }
+
         private void Form1_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data == null) return;
@@ -40,7 +50,15 @@ namespace SharpChip
             string[]? files = (string[]?)e?.Data?.GetData(DataFormats.FileDrop);
 
             if (files != null && files.Length > 0)
-                chipCore.LoadRom(files[0]);
+                loadROM(files[0]);
+        }
+
+        private void loadROToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var result = openFileDialog1.ShowDialog();
+
+            if (result == DialogResult.OK)
+                loadROM(openFileDialog1.FileName);
         }
 
         int checkChipKeyPress(KeyEventArgs e)
@@ -70,13 +88,17 @@ namespace SharpChip
 
         private void changePauseState()
         {
+            if (!chipCore.RomLoaded) return;
+
             if (emulationPaused)
             {
+                chipTimer.Start();
                 emulationPaused = false;
                 this.Text = "SharpChip";
             }
             else
             {
+                chipTimer.Stop();
                 emulationPaused = true;
                 this.Text = "SharpChip (Paused)";
             }
@@ -99,27 +121,6 @@ namespace SharpChip
             if (key != -1) chipCore.setKey(key, false);
         }
 
-        private void chipTimer_Tick(object sender, EventArgs e)
-        {
-            if (!chipCore.RomLoaded || emulationPaused) return;
-
-            chipCore.updateTimers();
-
-            for (int i = 0; i < AppSettings.IPF; i++)
-                chipCore.execute();
-
-            chipCore.drawToBuffer(screenBuffer);
-            pictureBox.Invalidate();
-        }
-
-        private void loadROToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var result = openFileDialog1.ShowDialog();
-
-            if (result == DialogResult.OK)
-                chipCore.LoadRom(openFileDialog1.FileName);
-        }
-
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             bool wasPaused = emulationPaused;
@@ -128,8 +129,32 @@ namespace SharpChip
             var frm = new SettingsForm();
             frm.StartPosition = FormStartPosition.CenterParent;
 
-           frm.ShowDialog();
+            frm.ShowDialog();
             if (!wasPaused) changePauseState();
+        }
+
+        const double FrameTime = 1000 / 60;
+        Stopwatch stopwatch = Stopwatch.StartNew();
+
+        double lastTickTime = 0;
+        double timer = 0;
+
+        private void chipTimer_Tick(object sender, EventArgs e)
+        {
+            timer += stopwatch.Elapsed.TotalMilliseconds - lastTickTime;
+            if (timer >= FrameTime)
+            {
+                timer -= FrameTime;
+                chipCore.updateTimers();
+
+                for (int i = 0; i < AppSettings.IPF; i++)
+                    chipCore.execute();
+
+                chipCore.drawToBuffer(screenBuffer);
+                pictureBox.Invalidate();
+            }
+
+            lastTickTime = stopwatch.Elapsed.TotalMilliseconds;
         }
     }
 

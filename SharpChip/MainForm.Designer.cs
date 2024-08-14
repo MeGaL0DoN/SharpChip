@@ -29,20 +29,14 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            chipTimer = new System.Windows.Forms.Timer(components);
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             loadROToolStripMenuItem = new ToolStripMenuItem();
             settingsToolStripMenuItem = new ToolStripMenuItem();
             openFileDialog1 = new OpenFileDialog();
+            chipTimer = new System.Windows.Forms.Timer(components);
             menuStrip1.SuspendLayout();
             SuspendLayout();
-            // 
-            // chipTimer
-            // 
-            chipTimer.Enabled = true;
-            chipTimer.Interval = 17;
-            chipTimer.Tick += chipTimer_Tick;
             // 
             // menuStrip1
             // 
@@ -51,7 +45,7 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, settingsToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(2064, 49);
+            menuStrip1.Size = new Size(2136, 49);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -80,12 +74,17 @@
             // 
             openFileDialog1.FileName = "openFileDialog1";
             // 
+            // chipTimer
+            // 
+            chipTimer.Interval = 2;
+            chipTimer.Tick += chipTimer_Tick;
+            // 
             // MainForm
             // 
             AllowDrop = true;
             AutoScaleDimensions = new SizeF(17F, 41F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(2064, 1081);
+            ClientSize = new Size(2136, 1117);
             Controls.Add(menuStrip1);
             DoubleBuffered = true;
             MainMenuStrip = menuStrip1;
@@ -103,12 +102,11 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Timer chipTimer;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem settingsToolStripMenuItem;
         private ToolStripMenuItem loadROToolStripMenuItem;
         private OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Timer chipTimer;
     }
 }

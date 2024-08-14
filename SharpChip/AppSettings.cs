@@ -2,6 +2,6 @@
 {
     public static class AppSettings
     {
-        public static int IPF { get; set; } = 15;
+        public static int IPF { get; set; } = 10;
     }
 }
