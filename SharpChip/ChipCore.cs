@@ -5,7 +5,7 @@ namespace SharpChip
     public class ChipCore
     {
         public bool RomLoaded { get; private set; }
-        public void LoadRom(string path)
+        public bool LoadRom(string path)
         {
             using (var fs = new FileStream(path, FileMode.Open))
             {
@@ -14,8 +14,10 @@ namespace SharpChip
                     reset();
                     fs.Read(RAM, 0x200, (int)(fs.Length));
                     RomLoaded = true;
+                    return true;
                 }
             }
+            return false;
         }
         private void reset()
         {

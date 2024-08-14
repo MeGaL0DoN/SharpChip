@@ -32,11 +32,21 @@ namespace SharpChip
             pictureBox.Invalidate();
         }
 
+        string currentROMPath;
+
+        void restartROM()
+        {
+            if (currentROMPath != null)
+                loadROM(currentROMPath);
+        }
+
         void loadROM(string path)
         {
             if (emulationPaused) changePauseState();
             else if (!chipTimer.Enabled) chipTimer.Start();
-            chipCore.LoadRom(path);
+
+            if (chipCore.LoadRom(path))
+                currentROMPath = path;
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -108,6 +118,8 @@ namespace SharpChip
         {
             if (e.KeyCode == Keys.Tab)
                 changePauseState();
+            else if (e.KeyCode == Keys.Escape)
+                restartROM();
             else
             {
                 int key = checkChipKeyPress(e);
@@ -155,6 +167,11 @@ namespace SharpChip
             }
 
             lastTickTime = stopwatch.Elapsed.TotalMilliseconds;
+        }
+
+        private void restartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            restartROM();
         }
     }
 

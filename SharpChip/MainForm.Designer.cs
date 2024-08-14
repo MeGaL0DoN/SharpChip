@@ -35,6 +35,7 @@
             settingsToolStripMenuItem = new ToolStripMenuItem();
             openFileDialog1 = new OpenFileDialog();
             chipTimer = new System.Windows.Forms.Timer(components);
+            restartToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -45,28 +46,28 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, settingsToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(2136, 49);
+            menuStrip1.Size = new Size(2136, 52);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { loadROToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { loadROToolStripMenuItem, restartToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            fileToolStripMenuItem.Size = new Size(87, 45);
+            fileToolStripMenuItem.Size = new Size(87, 48);
             fileToolStripMenuItem.Text = "File";
             // 
             // loadROToolStripMenuItem
             // 
             loadROToolStripMenuItem.Name = "loadROToolStripMenuItem";
-            loadROToolStripMenuItem.Size = new Size(325, 54);
+            loadROToolStripMenuItem.Size = new Size(448, 54);
             loadROToolStripMenuItem.Text = "Load ROM";
             loadROToolStripMenuItem.Click += loadROToolStripMenuItem_Click;
             // 
             // settingsToolStripMenuItem
             // 
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(149, 45);
+            settingsToolStripMenuItem.Size = new Size(149, 48);
             settingsToolStripMenuItem.Text = "Settings";
             settingsToolStripMenuItem.Click += settingsToolStripMenuItem_Click;
             // 
@@ -78,6 +79,13 @@
             // 
             chipTimer.Interval = 2;
             chipTimer.Tick += chipTimer_Tick;
+            // 
+            // restartToolStripMenuItem
+            // 
+            restartToolStripMenuItem.Name = "restartToolStripMenuItem";
+            restartToolStripMenuItem.Size = new Size(448, 54);
+            restartToolStripMenuItem.Text = "Restart";
+            restartToolStripMenuItem.Click += restartToolStripMenuItem_Click;
             // 
             // MainForm
             // 
@@ -108,5 +116,6 @@
         private ToolStripMenuItem loadROToolStripMenuItem;
         private OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Timer chipTimer;
+        private ToolStripMenuItem restartToolStripMenuItem;
     }
 }
