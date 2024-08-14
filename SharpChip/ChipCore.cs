@@ -19,7 +19,6 @@ namespace SharpChip
         }
         private void reset()
         {
-            fontset.CopyTo(RAM, 0);
             PC = 0x200;
             SP = 0;
             I = 0;
@@ -28,6 +27,8 @@ namespace SharpChip
             keyWaitReg = -1;
 
             Array.Clear(RAM, 0, RAM.Length);
+            fontset.CopyTo(RAM, 0);
+
             Array.Clear(V, 0, V.Length);
             Array.Clear(screenBuffer, 0, screenBuffer.Length);
         }
@@ -73,13 +74,13 @@ namespace SharpChip
             switch (opcode & 0xF000)
             {
                 case 0x0000:
-                    switch (opcode & 0x000F)
+                    switch (opcode & 0x0FFF)
                     {
-                        case 0x0000:
+                        case 0x00E0:
                             Array.Clear(screenBuffer, 0, screenBuffer.Length);
                             break;
-                        case 0x000E:
-                            PC = stack[--SP & 0xF];
+                        case 0x00EE:
+                            PC = stack[(--SP) & 0xF];
                             break;
                     }
                     break;
@@ -87,7 +88,7 @@ namespace SharpChip
                     PC = Addr();
                     break;
                 case 0x2000:
-                    stack[SP++ & 0xF] = PC;
+                    stack[(SP++) & 0xF] = PC;
                     PC = Addr();
                     break;
                 case 0x3000:
@@ -97,7 +98,12 @@ namespace SharpChip
                     if (V[X()] != Data()) PC += 2;
                     break;
                 case 0x5000:
-                    if (V[X()] == V[Y()]) PC += 2;
+                    switch (opcode & 0x000F)
+                    {
+                        case 0:
+                            if (V[X()] == V[Y()]) PC += 2;
+                            break;
+                    }
                     break;
                 case 0x6000:
                     V[X()] = Data();
@@ -142,14 +148,19 @@ namespace SharpChip
                             V[0xF] = (V[Y()] >= V[X()]) ? (byte)1 : (byte)0;
                             break;
                         case 0x000E:
-                            shifted = (byte)((V[X()] & 0b10000000) >> 7);
+                            shifted = (byte)((V[X()] & 0x80) >> 7);
                             V[X()] <<= 1;
                             V[0xF] = shifted;
                             break;
                     }
                     break;
                 case 0x9000:
-                    if (V[X()] != V[Y()]) PC += 2;
+                    switch (opcode & 0x000F)
+                    {
+                        case 0x0000:
+                            if (V[X()] != V[Y()]) PC += 2;
+                            break;
+                    }
                     break;
                 case 0xA000:
                     I = Addr();
@@ -197,17 +208,19 @@ namespace SharpChip
                             break;
                         case 0x0033:
                             byte vx = V[X()];
-                            RAM[I] = (byte)(vx / 100);
-                            RAM[I + 1] = (byte)((vx / 10) % 10);
-                            RAM[I + 2] = (byte)(vx % 10);
+                            RAM[I & 0xFFF] = (byte)(vx / 100);
+                            RAM[(I + 1) & 0xFFF] = (byte)((vx / 10) % 10);
+                            RAM[(I + 2) & 0xFFF] = (byte)(vx % 10);
                             break;
                         case 0x0055:
                             for (int i = 0; i <= X(); i++)
                                 RAM[(I + i) & 0xFFF] = V[i];
+
                             break;
                         case 0x0065:
                             for (int i = 0; i <= X(); i++)
                                 V[i] = RAM[(I + i) & 0xFFF];
+
                             break;
                     }
                     break;
